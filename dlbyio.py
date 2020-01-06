@@ -9,73 +9,82 @@ import requests
 import json
 import time
 import numpy as np
+from sys import exit
 
-
+KEY = "KGgU4s9dXtB0gc6FKNSgEKgOd4FlQ6Sm"
+HDR = {"x-apikey" : KEY}
 file_ul_URL = "https://api.dolby.com/file/upload"
 file_dl_URL = "https://api.dolby.com/file/download"
 noise_URL = "https://api.dolby.com/beta/media/process/noise"
 vfont_URL = "https://dolby-dev.apigee.net/alpha/vfont"
 
+def file_upload(dlb_url, fname):
+    print("DLBY.IO: Uploading " + fname + " to " + dlb_url)
+    r = requests.post(url=file_ul_URL, headers=HDR, data=json.dumps({"url" : dlb_url}))
+    # get file upload url from response
+    upload_url = r.json()['url']  
+    with open(fname, 'rb') as file:
+        r = requests.put(url=upload_url, headers=HDR, data=file)
 
-KEY = "KGgU4s9dXtB0gc6FKNSgEKgOd4FlQ6Sm"
+def file_download(dlb_url, fname):
+    print("DLBY.IO: Downloading " + fname + " from " + dlb_url)
+    r = requests.get(url=file_dl_URL, headers=HDR, params=json.dumps({"url" : dlb_url}))
+    open(fname, "wb").write(r.content)
 
-HDR = {"x-apikey" : KEY}
-in_file = "dlb://stef/inwav.wav"
-out_file = "dlb://stef/outwav.wav"
-
-
-r = requests.post(url=file_ul_URL, headers=HDR, data=json.dumps({"url" : in_file}))
-# get file url from response
-
-FILE_URL = r.json()['url']
-#print(FILE_URL)
-
-with open('Voice_challenge_32KHz_L.wav', 'rb') as file:
-    r = requests.put(url=FILE_URL, headers=HDR, data=file)
+def noise_process(dlb_in, dlb_out, intensity):
+    # process it with noise
+    print("DLBY.IO: Calling Noise")
+    r = requests.post(url=noise_URL, headers=HDR, data=json.dumps({"input" : dlb_in, "output" : dlb_out, "intensity" : intensity}))
+    if r.status_code != 200:
+        print("Voice Fonts request failed.")
+        print(r.content)
+        exit()
+        
+    JOB_ID = r.json()["job_id"]
+    print("Job ID: " + JOB_ID)
+    while(True):
+        r = requests.get(url=noise_URL+"?job_id="+JOB_ID, headers=HDR)
+        print("Status: " + r.json()["status"])
+        print("Progress: " + str(r.json()["progress"]))
     
+        if r.json()["status"] == "Success":
+            break
+        if r.json()["status"] == "Failed":
+            print(r.json())
+            exit()
+        time.sleep(5)
+    return r
+        
+def vfont_process(dlb_in, dlb_out, preset):
+    # combine lists dlb_in, dlb_out, params
+    print("DLBY.IO: Calling Voice Fonts")
+    data = {"input" : dlb_in, "output" : dlb_out, "preset" : preset}
+#    settings = files.update(settings)
+    r = requests.post(url=vfont_URL, headers=HDR, data=json.dumps(data))
+    if r.status_code != 200:
+        print("Voice Fonts request failed.")
+        print(r.content)
+        exit()
     
-# process it with noise
-r = requests.post(url=noise_URL, headers=HDR, data=json.dumps({"input" : in_file, "output" : out_file, "intensity" : "auto"}))
-
-JOB_ID = r.json()["job_id"]
-print(JOB_ID)
-while(True):
-    r = requests.get(url=noise_URL+"?job_id="+JOB_ID, headers=HDR)
-    print("Status: " + r.json()["status"])
-    print("Progress: " + str(r.json()["progress"]))
-
-    if r.json()["status"] == "Success":
-        break
-    if r.json()["status"] == "Failed":
-        print(r.json())
-        exit
-    time.sleep(5)
-r = requests.get(url=file_dl_URL, headers=HDR, data=json.dumps({"url" : in_file}))
-open("localfile.wav", "wb").write(r.content)
-
-# process it with vfont
-in_file = out_file
-out_file = "dlb://stef/vfont.wav"
+    JOB_ID = r.json()["job_id"]
+    print("Job ID: " + JOB_ID)
+    
+    while(True):
+        r = requests.get(url=vfont_URL,params=json.dump({"job_id" : JOB_ID}), headers=HDR)
+        print("Status: " + r.json()["status"])
+        print("Progress: " + str(r.json()["progress"]))
+        if r.json()["status"] == "Success":
+            break
+        if r.json()["status"] == "Failed":
+            print(r.json())
+            exit()    
+        time.sleep(5)
+    return r
 
 
-   
-r = requests.post(url=vfont_URL, headers=HDR, data=json.dumps({"input" : in_file, "output" : out_file}))
-JOB_ID = r.json()["job_id"]
-print(JOB_ID)
-
-while(True):
-    r = requests.get(url=vfont_URL+"?job_id="+JOB_ID,params=json.dump({"job_id" : JOB_ID, "preset" : "elf"}), headers=HDR)
-    print("Status: " + r.json()["status"])
-    print("Progress: " + str(r.json()["progress"]))
-    if r.json()["status"] == "Success":
-        break
-    if r.json()["status"] == "Failed":
-        print(r.json())
-        exit    
-    time.sleep(5)
 
 
-r = requests.get(url=file_dl_URL, headers=HDR, data=json.dumps({"url" : in_file}))
-open("localfile.wav", "wb").write(r.content)
+
+
 
 #print(r.text)

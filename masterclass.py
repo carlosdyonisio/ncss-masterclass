@@ -7,8 +7,8 @@ Created on Mon Dec 16 17:18:09 2019
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import interactive
-import requests
-import dlbyio
+#import requests
+#import dlbyio
 import scipy
 
 def plot_signal(data, fs):
