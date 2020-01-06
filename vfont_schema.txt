@@ -1,0 +1,44 @@
+const VFontBody = joi.object().keys({
+  input: location_schema.required(),
+  output: location_schema.required(),
+  preset: joi.string().valid(['none', 'w2m', 'm2w', 'elf', 'troll', 'dalek', 'ringbot', 'deep', 'wobble', 'flangebot', 'tube', 'swarm', 'dirty']),
+  override: joi.object().keys({
+    morpher: joi.object().optional().keys({
+      enable: joi.boolean().optional(),
+      pitch: joi.number().optional().min(0.5).max(2),
+      timbre: joi.number().optional().min(0.5).max(2),
+    }),
+    ringmod: joi.object().optional().keys({
+      enable: joi.boolean().optional(),
+      freq: joi.number().optional().min(1).max(1000),
+      mix: joi.number().optional().min(0.1).max(1),
+    }),
+    delaymod: joi.object().optional().keys({
+      enable: joi.boolean().optional(),
+      speed: joi.number().optional().min(0).max(100),
+      depth: joi.number().optional().min(1).max(80),
+      mix: joi.number().optional().min(0.1).max(1),
+    }),
+    flanger: joi.object().optional().keys({
+      enable: joi.boolean().optional(),
+      speed: joi.number().optional().min(0).max(100),
+      depth: joi.number().optional().min(0).max(80),
+      delay: joi.number().optional().min(0).max(160),
+      mix: joi.number().optional().min(0.1).max(1),
+    }),
+    eq: joi.object().optional().keys({
+      enable: joi.boolean().optional(),
+      low_gain: joi.number().optional().min(0.1).max(2),
+      mid_gain: joi.number().optional().min(0.1).max(2),
+      high_gain: joi.number().optional().min(0.1).max(2),
+    }),
+    distortion: joi.object().optional().keys({
+      enable: joi.boolean().optional(),
+      gain: joi.number().optional().min(1).max(20),
+      noise: joi.number().optional().min(0).max(1),
+      square: joi.number().optional().min(0).max(1),
+    }),
+  }),
+  on_complete: on_complete_schema.optional(),
+});
+const VFontResponse = EmptyResponse;
