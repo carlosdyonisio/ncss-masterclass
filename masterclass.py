@@ -28,16 +28,17 @@ def plot_fft_angle(data, fs):
     plt.ylabel("Angle (radians)")
 
 def plot_specgram(data, fs):
-    plt.specgram(data, fs)
+    NFFT = 1024
+    plt.specgram(x=data, NFFT=NFFT, Fs=fs)
 
 def plot_all(data, fs):
-    plt.subplot(411)
-    plot_signal(data,fs)
-    plt.subplot(412)
+    plt.subplot(311)
+    plot_signal(data, fs)
+    plt.subplot(312)
     plot_fft_magnitude(data, fs)
-    plt.subplot(413)
-    plot_fft_angle(data, fs)
-    plt.subplot(414)
+    #plt.subplot(413)
+    #plot_fft_angle(data, fs)
+    plt.subplot(313)
     plot_specgram(data, fs)
 
 

@@ -22,15 +22,27 @@ virtu_URL = "https://api.dolby.com/beta/media/process/virtualize"
 def file_upload(dlb_url, fname):
     print("DLBY.IO: Uploading " + fname + " to " + dlb_url)
     r = requests.post(url=file_ul_URL, headers=HDR, data=json.dumps({"url" : dlb_url}))
+    if r.status_code != 200:
+        print("Failed to get dlb url for file upload.")
+        return r
     # get file upload url from response
     upload_url = r.json()['url']  
     with open(fname, 'rb') as file:
         r = requests.put(url=upload_url, headers=HDR, data=file)
+    if r.status_code != 200:
+        print("File failed to upload.")
+    return r
+        
 
 def file_download(dlb_url, fname):
     print("DLBY.IO: Downloading " + fname + " from " + dlb_url)
     r = requests.get(url=file_dl_URL, headers=HDR, params={"url" : dlb_url})
+    if r.status_code != 200:
+        print("File failed to upload.")
+        return r
     open(fname, "wb").write(r.content)
+    return r
+
 
 def noise_process(dlb_in, dlb_out, intensity):
     # process it with noise
