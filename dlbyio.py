@@ -11,6 +11,11 @@ import time
 import numpy as np
 from sys import exit
 
+"""
+Audio files:
+https://drive.google.com/open?id=1qhknGgJWCCRefbnmW4vbMC756vQSye3B
+"""
+
 KEY = "KGgU4s9dXtB0gc6FKNSgEKgOd4FlQ6Sm"
 HDR = {"x-apikey" : KEY}
 file_ul_URL = "https://api.dolby.com/file/upload"
