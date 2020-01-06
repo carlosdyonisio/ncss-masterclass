@@ -9,6 +9,7 @@ Created on Mon Jan  6 10:51:58 2020
 import dlbyio
 import masterclass as mc
 # import wavio 
+import audiolib
 import scipy.io.wavfile as wavfile
 from matplotlib import interactive
 interactive(True)
@@ -24,21 +25,24 @@ virtu_wav = "virtu.wav"
 vfont_wav = "vfont.wav"
 
 dlbyio.file_upload(dlb_in, input_wav)
-fs, indata = wavfile.read(open(input_wav, "rb"))
+# use audiolib readw
+fs, indata = audiolib.read_wave(input_wav)
 mc.plot_all(indata, fs)
+
+noise = np.random.rand(indata.shape[0], indata.shape[1] )-0.5
 
 dlb_out = "dlb://" + your_name + "/clean.wav"
 
 dlbyio.noise_process(dlb_in, dlb_out, "auto")
 dlbyio.file_download(dlb_out, clean_wav)
-fs, indata = wavfile.read(open(clean_wav, "rb"))
+fs, indata = audiolib.read_wave(clean_wav)
 mc.plot_all(indata, fs)
 
 #dlb_in = dlb_out
 dlb_out = "dlb://" + your_name + "/virtu.wav"
 dlbyio.virtualize_process(dlb_in, dlb_out, "stereo_front", 3)
 dlbyio.file_download(dlb_out, virtu_wav)
-fs, indata = wavfile.read(open(virtu_wav, "rb"))
+fs, indata = = audiolib.read_wave(virtu_wav)
 mc.plot_all(indata, fs)
 
 # process it with vfont
@@ -47,5 +51,5 @@ dlb_out = "dlb://" + your_name + "/vfont.wav"
 #plot.interactive(True)
 dlbyio.vfont_process(dlb_in, dlb_out, "dalek")
 dlbyio.file_download(dlb_out, vfont_wav)
-fs, indata = wavfile.read(open(vfont_wav, "rb"))
+fs, indata = = audiolib.read_wave(vfont_wav)
 mc.plot_all(indata, fs)

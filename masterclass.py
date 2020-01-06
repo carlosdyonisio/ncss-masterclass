@@ -34,7 +34,8 @@ def plot_fft_angle(data, fs):
 
 def plot_specgram(data, fs):
     NFFT = 1024
-    plt.specgram(x=data, NFFT=NFFT, Fs=fs)
+    # will only plot the spectrogram of the first channel
+    plt.specgram(x=data[:,0], NFFT=NFFT, Fs=fs)
     plt.show()
 
 def plot_all(data, fs):
