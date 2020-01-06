@@ -20,6 +20,8 @@ vfont_URL = "https://api.dolby.com/alpha/vfont"
 virtu_URL = "https://api.dolby.com/beta/media/process/virtualize"
 
 def file_upload(dlb_url, fname):
+    # dlb_url: the url of the file on the dlby.io servers
+    # fname: local filename
     print("DLBY.IO: Uploading " + fname + " to " + dlb_url)
     r = requests.post(url=file_ul_URL, headers=HDR, data=json.dumps({"url" : dlb_url}))
     if r.status_code != 200:
@@ -35,6 +37,8 @@ def file_upload(dlb_url, fname):
         
 
 def file_download(dlb_url, fname):
+    # dlb_url: the url of the file on the dlby.io servers
+    # fname: local filename
     print("DLBY.IO: Downloading " + fname + " from " + dlb_url)
     r = requests.get(url=file_dl_URL, headers=HDR, params={"url" : dlb_url})
     if r.status_code != 200:
@@ -45,6 +49,9 @@ def file_download(dlb_url, fname):
 
 
 def noise_process(dlb_in, dlb_out, intensity):
+    # dlb_in: the url of the input file on the dlby.io servers
+    # dlb_in: the url of the output file on the dlby.io servers
+    # intensity: how agressively to remove noise
     # process it with noise
     print("DLBY.IO: Calling Noise")
     r = requests.post(url=noise_URL, headers=HDR, data=json.dumps({"input" : dlb_in, "output" : dlb_out, "intensity" : intensity}))
@@ -58,7 +65,9 @@ def noise_process(dlb_in, dlb_out, intensity):
     return r
         
 def vfont_process(dlb_in, dlb_out, preset):
-    # combine lists dlb_in, dlb_out, params
+    # dlb_in: the url of the input file on the dlby.io servers
+    # dlb_in: the url of the output file on the dlby.io servers
+    # preset: string representing the VFont preset mode
     print("DLBY.IO: Calling Voice Fonts")
     data = {"input" : dlb_in, "output" : dlb_out, "preset" : preset}
     r = requests.post(url=vfont_URL, headers=HDR, data=json.dumps(data))
@@ -74,6 +83,10 @@ def vfont_process(dlb_in, dlb_out, preset):
 
 
 def virtualize_process(dlb_in, dlb_out, position, room_level):
+    # dlb_in: the url of the input file on the dlby.io servers
+    # dlb_in: the url of the output file on the dlby.io servers
+    # position: string describing he desired location to place the input audio
+    # room_level: how much room reverberance to add
     # combine lists dlb_in, dlb_out, params
     print("DLBY.IO: Calling Virtualize")
     data = {"inputs" : [{"input" : dlb_in, "position" : position}], "output" : dlb_out, "room_level" : room_level}
