@@ -13,6 +13,7 @@ def plot_signal(data, fs):
     plt.plot(np.arange(data.shape[0])/fs, data)
     plt.xlabel("Time (s)")
     plt.ylabel("Amplitude")
+    plt.show()
 
 def plot_fft_magnitude(data, fs):
     # this allows experimentation of length of FFT, and number of bins etc.
@@ -20,16 +21,21 @@ def plot_fft_magnitude(data, fs):
     plt.plot(np.arange(data.shape[0])/data.shape[0]*fs, np.abs(fft_data))
     plt.xlabel("Frequency (Hz)")
     plt.ylabel("Magnitude")
+    plt.show()
+
     
 def plot_fft_angle(data, fs):
     fft_data = scipy.fft(data)
     plt.plot(np.arange(data.shape[0])/data.shape[0]*fs, np.angle(fft_data))
     plt.xlabel("Frequency (Hz)")
     plt.ylabel("Angle (radians)")
+    plt.show()
+
 
 def plot_specgram(data, fs):
     NFFT = 1024
     plt.specgram(x=data, NFFT=NFFT, Fs=fs)
+    plt.show()
 
 def plot_all(data, fs):
     plt.subplot(311)
@@ -40,6 +46,7 @@ def plot_all(data, fs):
     #plot_fft_angle(data, fs)
     plt.subplot(313)
     plot_specgram(data, fs)
+    plt.show()
 
 
 
